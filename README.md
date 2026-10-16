@@ -44,14 +44,11 @@ The dataset (`student_lifestyle_dataset.csv`) contains student-level records wit
 ### 2. Feature Engineering
 - **Total Activity Hours**: Sum of extracurricular and physical activity hours
 - **Free Time Hours**: Remaining hours after accounting for study, sleep, activities, and social time
-- **GPA Category**: Binned GPA into Low, Medium, and High
-- **Study–GPA Ratio** and **Sleep–GPA Ratio**: Interaction terms
 - **Is_Stressed**: Binary encoding of stress (Low → 0, Moderate/High → 1)
 - Duplicate row removal
 
 ### 3. Data Preprocessing
 - Label encoding for `Stress_Level`
-- One-hot encoding for `GPA_Category`
 - Outlier detection via z-scores and capping with IQR method
 - Standard scaling of numeric features
 
@@ -93,7 +90,18 @@ Evaluation metrics: **Mean Squared Error (MSE)** and **R² Score**.
 
 ## Results
 
-The project demonstrates that lifestyle factors such as study hours, sleep duration, and stress levels have statistically significant relationships with GPA. The Random Forest Regressor generally outperforms Linear Regression, capturing non-linear patterns in student lifestyle data.
+Held-out performance on 2,000 students (80-20 split, `random_state=42`):
+
+| Model | MSE | R² |
+|---|---|---|
+| Linear Regression | 0.0424 | 0.546 |
+| Random Forest | 0.0508 | 0.455 |
+
+R² stays at 0.52–0.55 (Linear Regression) and 0.44–0.46 (Random Forest) across the 70-30 and 60-40 splits. The full model is significant by ANOVA (F ≈ 214, p < 0.001).
+
+- Study hours is the dominant predictor (≈59% of Random Forest feature importance). Social time, physical activity and stress level are also significant in the univariate F-tests, while sleep and extracurricular hours are not.
+- Linear Regression slightly outperforms Random Forest, which suggests the relationships are mostly linear.
+- GPA-derived features (GPA category, GPA ratios) are excluded on purpose: they leak the target and inflate R² to ~0.99.
 
 ## How to Run
 
